@@ -80,7 +80,16 @@ RCT_EXPORT_METHOD(configureCallKit: (NSDictionary *)params) {
       self.activeCalls = [NSMutableDictionary dictionary];
 
     _settings = [[NSMutableDictionary alloc] initWithDictionary:params];
-    CXProviderConfiguration *configuration = [[CXProviderConfiguration alloc] initWithLocalizedName:params[@"appName"]];
+      NSString * appVersionString = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
+      NSString* requiredVersion = @"14.0.0";
+      CXProviderConfiguration *configuration = nil;
+      if ([requiredVersion compare:appVersionString options:NSNumericSearch] == NSOrderedDescending) {
+          // appVersion is lower than requiredVersion
+           configuration = [[CXProviderConfiguration alloc] initWithLocalizedName:params[@"appName"]];
+      } else {
+          configuration = [[CXProviderConfiguration alloc] init];
+      }
+
     configuration.maximumCallGroups = 1;
     configuration.maximumCallsPerCallGroup = 1;
     if (_settings[@"imageName"]) {
